@@ -20,7 +20,7 @@ class _TimerRaii {
 	_TimerRaii& operator=(_TimerRaii&&) = delete;
 
   private:
-	const std::string& _id;
+	std::string _id;
 };
 
 class _Timer {
