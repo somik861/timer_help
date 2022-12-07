@@ -6,6 +6,22 @@
 #include <iostream>
 #include <map>
 #include <string>
+#include <string_view>
+
+class _TimerRaii {
+  public:
+	_TimerRaii(const std::string& id);
+	~_TimerRaii();
+
+	_TimerRaii(const _TimerRaii&) = delete;
+	_TimerRaii& operator=(const _TimerRaii&) = delete;
+
+	_TimerRaii(_TimerRaii&&) = delete;
+	_TimerRaii& operator=(_TimerRaii&&) = delete;
+
+  private:
+	const std::string& _id;
+};
 
 class _Timer {
   public:
@@ -15,6 +31,8 @@ class _Timer {
 		auto& val = _starts[id];
 		val = now();
 	}
+
+	_TimerRaii start_raii(const std::string& id) { return _TimerRaii(id); }
 
 	void end(const std::string& id) {
 		auto val = now();
@@ -61,3 +79,7 @@ class _Timer {
 };
 
 _Timer Timer;
+
+_TimerRaii::_TimerRaii(const std::string& id) : _id(id) { Timer.start(id); }
+
+_TimerRaii::~_TimerRaii() { Timer.end(_id); }
