@@ -78,8 +78,8 @@ class _Timer {
 	    _starts;
 };
 
-_Timer Timer;
+inline _Timer Timer;
 
-_TimerRaii::_TimerRaii(const std::string& id) : _id(id) { Timer.start(id); }
+inline _TimerRaii::_TimerRaii(const std::string& id) : _id(id) { Timer.start(id); }
 
-_TimerRaii::~_TimerRaii() { Timer.end(_id); }
+inline _TimerRaii::~_TimerRaii() { Timer.end(_id); }
