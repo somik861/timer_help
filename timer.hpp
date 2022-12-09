@@ -39,6 +39,7 @@ class _Timer {
 
 		auto& start = _starts.at(id);
 		_summary[id] += val - start;
+		++_counts[id];
 	}
 
 	void flush() const {
@@ -54,7 +55,10 @@ class _Timer {
 	void flush_to(std::ostream& p) const {
 		p << "Time consumned by sections:\n";
 		for (const auto& [id, time] : _summary)
-			p << id << ":  " << time.count() / 1'000'000'000.0l << "s\n";
+			p << id << ":  " << time.count() / 1'000'000'000.0l << "s"
+			  << "     (" << time.count() / _counts.at(id) / 1'000'000.0l
+			  << "ms per cycle)"
+			  << "\n";
 	}
 
 	void clear() {
@@ -76,10 +80,14 @@ class _Timer {
 	std::map<std::string, std::chrono::duration<long int, std::nano>> _summary;
 	std::map<std::string, std::chrono::time_point<std::chrono::steady_clock>>
 	    _starts;
+
+	std::map<std::string, std::size_t> _counts;
 };
 
 inline _Timer Timer;
 
-inline _TimerRaii::_TimerRaii(const std::string& id) : _id(id) { Timer.start(id); }
+inline _TimerRaii::_TimerRaii(const std::string& id) : _id(id) {
+	Timer.start(id);
+}
 
 inline _TimerRaii::~_TimerRaii() { Timer.end(_id); }
